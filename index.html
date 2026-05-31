@@ -218,7 +218,10 @@
         • Pada redirecting constructor, <strong>tidak boleh ada body</strong> → hanya <code>: this(parameter)</code> sebagai satu-satunya inisialisasi.<br>
         • Digunakan untuk menginisialisasi <code>final</code> fields secara tidak langsung, karena delegasi ke constructor utama akan mengisi final fields.
       </div>
-      <pre><code>class Demo {
+      <pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass Demo {
   final int a;
   final int b;
   Demo(this.a, this.b);  // primary constructor
@@ -232,73 +235,443 @@
     </div>
   </div>
 
-  <!-- 3. Sintaks Dasar Point -->
+  <!-- 3. sintaks dasar redirection constructort -->
   <div class="slide-card">
-    <div class="slide-header"><div class="slide-title"><i class="fas fa-map-pin"></i> Slide 3: Sintaks Dasar – Class Point</div></div>
+    <div class="slide-header"><div class="slide-title"><i class="fas fa-map-pin"></i> Slide 3: sintaks dasar redirection constructor</div></div>
     <div class="slide-content">
-      <pre><code>class Point {
-  final double x, y;
-  Point(this.x, this.y);
+      <pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass Point {
+  final double x;
+  final double y;
+
+  // Konstruktor utama
+  Point(this.x, this.y) {
+    // print('Point created at ($x, $y)');
+  }
+
+  // Konstruktor pengarah (redirecting constructor)
+  // Mengarahkan ke konstruktor utama dengan nilai default (0,0)
   Point.origin() : this(0, 0);
+
+  // Mengarahkan ke konstruktor utama dengan nilai y = 0
   Point.onXAxis(double x) : this(x, 0);
+
+  // Mengarahkan ke konstruktor utama dengan nilai x = 0
   Point.onYAxis(double y) : this(0, y);
+
+  @override
+  String toString() {
+    return 'Point($x, $y)';
+  }
 }
+
 void main() {
-  print(Point.origin());   // Point(0,0)
+  // Penggunaan
+  var origin = Point.origin(); // Point(0, 0)
+  var pointOnX = Point.onXAxis(5); // Point(5, 0)
+  var pointOnY = Point.onYAxis(3); // Point(0, 3)
+
+  // Cetak variabel origin, pointOnX, dan pointOnY
+  print('Origin: $origin');
+  print('Point on X-axis: $pointOnX');
+  print('Point on Y-axis: $pointOnY');
 }</code></pre>
     </div>
   </div>
 
   <!-- 4. Masalah tanpa redirecting -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-bug"></i> Slide 4: Masalah Tanpa Redirecting</div></div>
-  <div class="slide-content"><p>Tanpa redirecting, kita mencoba menginisialisasi <code>final</code> fields di body → ERROR. Redirecting menyelesaikan ini dengan delegasi.</p>
-  <pre><code>// ERROR: The final variables can't be assigned
-// Rectangle.square(double side) { width = side; height = side; }</code></pre></div></div>
+  <div class="slide-content"><p>Tanpa redirecting, kita mencoba menginisialisasi <code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass Rectangle {
+  final double width;
+  final double height;
+
+  Rectangle(this.width, this.height);
+
+  // Tanpa redirecting - ini akan ERROR karena final fields
+  // Rectangle.square(double side) {
+  //   width = side;    // ERROR: The final variable 'width' can only be set once
+  //   height = side;   // ERROR: The final variable 'height' can only be set once
+  // }
+
+  // Rectangle.withDefault() {
+  //   width = 100;     // ERROR: The final variable 'width' can only be set once
+  //   height = 50;     // ERROR: The final variable 'height' can only be set once
+  // }
+
+  // ✅ SOLUSI YANG BENAR dengan Redirecting Constructor:
+  Rectangle.square(double side) : this(side, side);
+  Rectangle.withDefault() : this(100, 50);
+
+  @override
+  String toString() {
+    return 'Rectangle(width: $width, height: $height)';
+  }
+}
+
+void main() {
+  var square = Rectangle.square(10);
+  var defaultRect = Rectangle.withDefault();
+  
+  print('Square: $square');           // Rectangle(width: 10, height: 10)
+  print('Default: $defaultRect');     // Rectangle(width: 100, height: 50)
+}</code></pre></div></div>
 
   <!-- 5. Solusi dengan Redirecting (Rectangle) -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-check-circle"></i> Slide 5: Solusi – Rectangle dengan Redirecting</div></div>
-  <div class="slide-content"><pre><code>class Rectangle {
-  final double width, height;
-  Rectangle(this.width, this.height);
-  Rectangle.square(double side) : this(side, side);
-  Rectangle.widthDefault() : this(100, 50);
+  <div class="slide-content"><pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass Rectangle {
+final double width;
+final double height;
+// Main constructor
+Rectangle(this.width, this.height) {
+print('Rectangle $width x $height created');
 }
-var sq = Rectangle.square(10);</code></pre></div></div>
+// Redirecting constructor
+Rectangle.square(double side) : this(side, side);
+Rectangle.withDefault() : this(100, 50);
+Rectangle.fromWidth(double width) : this(width, width * 0.618); // Golden ratio
+@override
+String toString() {
+return 'Rectangle(width: ${width.toStringAsFixed(2)}, height: ${height.toStringAsFixed(2)})';
+}
+}
+void main(){
+// Penggunaan
+var square = Rectangle.square(10); // 10x10
+var defaultRect = Rectangle.withDefault(); // 100x50
+var goldenRect = Rectangle.fromWidth(100); // 100x61.8
+print('Square: $square');
+print('Default Rectangle: $defaultRect');
+print('Golden Ratio Rectangle: $goldenRect');
+}</code></pre></div></div>
 
   <!-- 6. Named parameters redirecting -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-tags"></i> Slide 6: Redirecting dengan Named Parameters</div></div>
-  <div class="slide-content"><pre><code>class Person {
-  final String name; final int age; final String? email;
+  <div class="slide-content"><pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass Person {
+  final String name;
+  final int age;
+  final String? email;
+
+  // Main constructor dengan named parameters
   Person({required this.name, required this.age, this.email});
+
+  // Redirecting dengan default values
   Person.anonymous() : this(name: 'Anonymous', age: 0);
+
+  Person.fromName(String name) : this(name: name, age: 0);
+
   Person.adult(String name) : this(name: name, age: 18);
+
+  Person.child(String name, int years) : this(name: name, age: years, email: null);
+
+  @override
+  String toString() {
+    return 'Name: $name, Age: $age, Email: ${email ?? "N/A"}';
+  }
+}
+
+void main() {
+  // Contoh penggunaan
+  var anonymous = Person.anonymous();
+  var fromName = Person.fromName('Budi');
+  var adult = Person.adult('Joko');
+  var child = Person.child('Ani', 10);
+
+  print(anonymous);  // Name: Anonymous, Age: 0, Email: N/A
+  print(fromName);   // Name: Budi, Age: 0, Email: N/A
+  print(adult);      // Name: Joko, Age: 18, Email: N/A
+  print(child);      // Name: Ani, Age: 10, Email: N/A
 }</code></pre></div></div>
 
-  <!-- 7. Configuration class -->
+  <!-- 7.praktik 1-Configuration class -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-sliders-h"></i> Slide 7: Praktik 1 - Configuration Class</div></div>
-  <div class="slide-content"><pre><code>class ServerConfig {
-  final String host; final int port; final bool useSsl;
-  ServerConfig({required this.host, this.port = 8080, this.useSsl = false});
-  ServerConfig.dev() : this(host: 'localhost', port: 3000);
-  ServerConfig.prod() : this(host: 'api.myapp.com', useSsl: true);
+  <div class="slide-content"><pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass DatabaseConfig {
+  final String host;
+  final int port;
+  final String username;
+  final String password;
+  final String database;
+  final bool useSSL;
+
+  // Konstruktor utama
+  DatabaseConfig({
+    required this.host,
+    required this.port,
+    required this.username,
+    required this.password,
+    required this.database,
+    this.useSSL = false,
+  });
+
+  // ✅ BENAR: Redirecting constructor untuk development
+  DatabaseConfig.development()
+      : this(
+          host: 'localhost',
+          port: 5432,
+          username: 'dev_user',
+          password: 'dev_pass',
+          database: 'dev_db',
+          useSSL: false,
+        );
+
+  // ✅ BENAR: Redirecting constructor untuk production
+  DatabaseConfig.production()
+      : this(
+          host: 'db.example.com',
+          port: 5432,
+          username: 'prod_user',
+          password: 'prod_pass',
+          database: 'prod_db',
+          useSSL: true,
+        );
+
+  // ✅ BENAR: Redirecting constructor untuk localhost (MySQL)
+  DatabaseConfig.localhost()
+      : this(
+          host: 'localhost',
+          port: 3306,
+          username: 'root',
+          password: '',
+          database: 'test',
+          useSSL: false,
+        );
+
+  // ✅ BENAR: Redirecting constructor dengan sebagian parameter
+  DatabaseConfig.withHost(String host, String database)
+      : this(
+          host: host,
+          port: 5432,
+          username: 'default',
+          password: 'password',
+          database: database,
+          useSSL: false,
+        );
+
+  @override
+  String toString() {
+    // Perbaiki penulisan password masking
+    String maskedPassword = '*' * password.length;
+    return 'DatabaseConfig(\n' +
+        '  host: $host,\n' +
+        '  port: $port,\n' +
+        '  username: $username,\n' +
+        '  password: $maskedPassword,\n' +
+        '  database: $database,\n' +
+        '  useSSL: $useSSL\n' +
+        ');';
+  }
+}
+
+void main() {
+  var devConfig = DatabaseConfig.development();
+  var prodConfig = DatabaseConfig.production();
+  var localConfig = DatabaseConfig.localhost();
+  var customHost = DatabaseConfig.withHost('192.168.1.100', 'my_app_db');
+
+  print('=== Development ===');
+  print(devConfig);
+  print('\n=== Production ===');
+  print(prodConfig);
+  print('\n=== Localhost ===');
+  print(localConfig);
+  print('\n=== Custom Host ===');
+  print(customHost);
 }</code></pre></div></div>
 
   <!-- 8. Validasi + Redirecting -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-shield"></i> Slide 8: Redirecting Constructor dengan Validasi</div></div>
   <div class="slide-content"><p>Validasi dilakukan di <strong>constructor utama</strong>. Redirecting hanya mendelegasikan parameter, dan validasi tetap berjalan.</p>
-  <pre><code>class Temperature {
-  final double celsius;
-  Temperature(this.celsius) { if (celsius < -273.15) throw Exception(); }
-  Temperature.fromFahrenheit(double f) : this((f - 32) * 5/9);
+  <pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aclass BankAccount {
+  final String accountNumber;
+  final String ownerName;
+  final double balance;
+
+  // Konstruktor utama privat
+  BankAccount._({
+    required this.accountNumber,
+    required this.ownerName,
+    required this.balance,
+  });
+
+  // Factory publik dengan pengalihan (redirecting) dan validasi
+  factory BankAccount.create({
+    required String accountNumber,
+    required String ownerName,
+    double initialBalance = 0,
+  }) {
+    // Validasi
+    if (accountNumber.isEmpty) {
+      throw ArgumentError('Nomor akun tidak boleh kosong');
+    }
+    if (ownerName.isEmpty) {
+      throw ArgumentError('Nama pemilik tidak boleh kosong');
+    }
+    if (initialBalance < 0) {
+      throw ArgumentError('Saldo awal tidak boleh negatif');
+    }
+
+    // Mengalihkan ke konstruktor privat
+    return BankAccount._(
+      accountNumber: accountNumber,
+      ownerName: ownerName,
+      balance: initialBalance,
+    );
+  }
+
+  // Konstruktor pengalihan (redirecting) lainnya
+  factory BankAccount.fromJson(Map<String, dynamic> json) {
+    try {
+      return BankAccount.create(
+        accountNumber: json['accountNumber']?.toString() ?? '',
+        ownerName: json['ownerName']?.toString() ?? '',
+        initialBalance: (json['balance'] as num?)?.toDouble() ?? 0,
+      );
+    } on ArgumentError catch (e) {
+      throw FormatException('Data JSON tidak valid untuk BankAccount: ${e.message}');
+    } catch (e) {
+      throw FormatException('Kesalahan saat mem-parsing JSON untuk BankAccount: ${e}');
+    }
+  }
+
+  @override
+  String toString() {
+    return 'Nomor Akun: $accountNumber, Pemilik: $ownerName, Saldo: \$${balance.toStringAsFixed(2)}';
+  }
+}
+
+// Contoh penggunaan
+void main() {
+  // Membuat akun baru
+  var account = BankAccount.create(
+    accountNumber: '1234567890',
+    ownerName: 'Fajar Rio Dinata',
+    initialBalance: 500000,
+  );
+  print(account);
+  // Output: Nomor Akun: 1234567890, Pemilik: Fajar Rio Dinata, Saldo: $500000.00
+
+  // Membuat akun dari JSON
+  var jsonData = {
+    'accountNumber': '9876543210',
+    'ownerName': 'Budi Santoso',
+    'balance': 750000.50,
+  };
+  var accountFromJson = BankAccount.fromJson(jsonData);
+  print(accountFromJson);
+  // Output: Nomor Akun: 9876543210, Pemilik: Budi Santoso, Saldo: $750000.50
+
+  // Contoh error validasi
+  try {
+    var invalidAccount = BankAccount.create(
+      accountNumber: '',
+      ownerName: 'Test',
+      initialBalance: 100,
+    );
+  } catch (e) {
+    print('Error: ${e}'); // Error: Nomor akun tidak boleh kosong
+  }
 }</code></pre></div></div>
 
   <!-- 9. Multiple redirecting levels -->
   <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-code-branch"></i> Slide 9: Multiple Redirecting Levels</div></div>
-  <div class="slide-content"><pre><code>class Product {
-  final String id, name, category; final double price; final int stock;
-  Product({required this.id, required this.name, required this.price, required this.category, required this.stock});
-  Product.basic(String id, String name, double price) : this(id: id, name: name, price: price, category: 'General', stock: 0);
-  Product.withCategory(String id, String name, double price, String cat) : this(id: id, name: name, price: price, category: cat, stock: 0);
+  <div class="slide-content"><pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aimport 'dart:core';
+
+class Product {
+  final String id;
+  final String name;
+  final double price;
+  final String category;
+  final int stock;
+  final DateTime? expiryDate;
+
+  // Main constructor terlengkap
+  Product({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.category,
+    required this.stock,
+    this.expiryDate,
+  });
+
+  // ✅ Level 1 redirecting (diperbaiki)
+  Product.basic(String id, String name, double price)
+      : this(
+          id: id,
+          name: name,
+          price: price,
+          category: 'General',
+          stock: 0,
+        );
+
+  // ✅ Level 2 redirecting (dari yang basic)
+  Product.withCategory(String id, String name, double price, String category)
+      : this(
+          id: id,
+          name: name,
+          price: price,
+          category: category,
+          stock: 0,
+        );
+
+  // ✅ Level 3 redirecting (dari withCategory) - sudah benar
+  Product.full({
+    required String id,
+    required String name,
+    required double price,
+    required String category,
+    required int stock,
+    DateTime? expiry,
+  }) : this(
+          id: id,
+          name: name,
+          price: price,
+          category: category,
+          stock: stock,
+          expiryDate: expiry,
+        );
+
+  @override
+  String toString() {
+    return 'Product(id: $id, name: $name, price: $price, category: $category, stock: $stock, expiryDate: $expiryDate)';
+  }
+}
+
+// Contoh penggunaan (diletakkan di luar class)
+void main() {
+  var basic = Product.basic('P001', 'Item 1', 10.0);
+  var categorized = Product.withCategory('P002', 'Item 2', 20.0, 'Electronics');
+  var full = Product.full(
+    id: 'P003',
+    name: 'Item 3',
+    price: 30.0,
+    category: 'Food',
+    stock: 100,
+    expiry: DateTime.now().add(Duration(days: 30)),
+  );
+
+  print('Basic Product: $basic');
+  print('Categorized Product: $categorized');
+  print('Full Product: $full');
 }</code></pre></div></div>
 
   <!-- 10. perbandingan redirecting vs factory -->
@@ -310,48 +683,241 @@ var sq = Rectangle.square(10);</code></pre></div></div>
     <div class="slide-header"><div class="slide-title"><i class="fas fa-cloud-arrow-up"></i> Slide 11: Praktik 2 - API Response Model dengan Redirecting</div></div>
     <div class="slide-content">
       <p>Membangun model respons API yang memiliki berbagai bentuk input (JSON, manual error, success) namun tetap terpusat pada constructor utama. Redirecting memudahkan pembuatan objek dari berbagai skenario.</p>
-      <pre><code>class ApiResponse<T> {
+      <pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aimport 'dart:core';
+
+class ApiResponse<T> {
   final bool success;
   final T? data;
-  final String? errorMessage;
+  final String? error;
   final int statusCode;
+  final DateTime timestamp;
 
-  // Main constructor terlengkap
-  ApiResponse({required this.success, this.data, this.errorMessage, required this.statusCode});
+  // Main constructor
+  ApiResponse({
+    required this.success,
+    this.data,
+    this.error,
+    required this.statusCode,
+    required this.timestamp,
+  });
 
-  // Redirecting: response sukses (tanpa pesan error)
-  ApiResponse.success(this.data, {int code = 200}) : this(success: true, data: data, errorMessage: null, statusCode: code);
-
-  // Redirecting: response error (manual)
-  ApiResponse.error(this.errorMessage, {int code = 400}) : this(success: false, data: null, errorMessage: errorMessage, statusCode: code);
-
-  // Redirecting: dari json (simulasi parsing sederhana)
-  ApiResponse.fromJson(Map&lt;String, dynamic&gt; json, T? Function(dynamic) fromJson)
+  // ✅ Success response (diperbaiki)
+  ApiResponse.success(T data)
       : this(
-          success: json['ok'] == true,
-          data: json['ok'] == true ? fromJson(json['result']) : null,
-          errorMessage: json['error'] as String?,
-          statusCode: json['code'] ?? 500,
+          success: true,
+          data: data,
+          error: null,
+          statusCode: 200,
+          timestamp: DateTime.now(),
         );
-  
+
+  // ✅ Error response (diperbaiki)
+  ApiResponse.error(String error, int statusCode)
+      : this(
+          success: false,
+          data: null,
+          error: error,
+          statusCode: statusCode,
+          timestamp: DateTime.now(),
+        );
+
+  // ✅ Not found (sudah benar)
+  ApiResponse.notFound()
+      : this(
+          success: false,
+          data: null,
+          error: 'Resource not found',
+          statusCode: 404,
+          timestamp: DateTime.now(),
+        );
+
+  // ✅ Unauthorized (sudah benar)
+  ApiResponse.unauthorized()
+      : this(
+          success: false,
+          data: null,
+          error: 'Unauthorized access',
+          statusCode: 401,
+          timestamp: DateTime.now(),
+        );
+
+  // From JSON (factory constructor)
+  factory ApiResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(dynamic) fromJsonT,
+  ) {
+    return ApiResponse(
+      success: json['success'] ?? false,
+      data: json['data'] != null ? fromJsonT(json['data']) : null,
+      error: json['error'] as String?,
+      statusCode: json['statusCode'] ?? 500,
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'])
+          : DateTime.now(),
+    );
+  }
+
   @override
-  String toString() => 'ApiResponse(success: $success, data: $data, error: $errorMessage)';
+  String toString() {
+    return 'ApiResponse(success: $success, data: $data, error: $error, statusCode: $statusCode, timestamp: $timestamp)';
+  }
 }
 
 // Contoh penggunaan
-void demoApi() {
-  var successResp = ApiResponse&lt;String&gt;.success('Data pengguna', code: 201);
-  var errorResp = ApiResponse&lt;int&gt;.error('Token tidak valid', code: 401);
-  print(successResp);
-  print(errorResp);
-  // Simulasi dariJson: ApiResponse.fromJson(json, (d) => d.toString())
+void main() {
+  // Success response
+  var success = ApiResponse<String>.success('Data loaded');
+  print(success);
+  // Output: ApiResponse(success: true, data: Data loaded, error: null, statusCode: 200, timestamp: 2025-01-04 12:34:56.789)
+
+  // Error response
+  var error = ApiResponse<int>.error('Bad Request', 400);
+  print(error);
+  // Output: ApiResponse(success: false, data: null, error: Bad Request, statusCode: 400, timestamp: ...)
+
+  // Not found
+  var notFound = ApiResponse<Null>.notFound();
+  print(notFound);
+  // Output: ApiResponse(success: false, data: null, error: Resource not found, statusCode: 404, timestamp: ...)
+
+  // Unauthorized
+  var unauthorized = ApiResponse<Null>.unauthorized();
+  print(unauthorized);
+  // Output: ApiResponse(success: false, data: null, error: Unauthorized access, statusCode: 401, timestamp: ...)
+
+  // From JSON
+  Map<String, dynamic> jsonData = {
+    'success': true,
+    'data': 'User profile data',
+    'statusCode': 200,
+    'timestamp': DateTime.now().toIso8601String(),
+  };
+  var fromJson = ApiResponse<String>.fromJson(jsonData, (data) => data.toString());
+  print(fromJson);
 }</code></pre>
       <div class="info-box"><i class="fas fa-lightbulb"></i> <strong>Mengapa redirecting berguna di API response?</strong> Menghindari duplikasi assignment final fields, memastikan konsistensi (misal success=true tidak punya errorMessage). Semua logika tetap di constructor utama.</div>
     </div>
   </div>
+    
+     <!-- 12. Rdirecting Constructor dengan initializer List -->
+  <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-code-branch"></i> Slide 12: Rdirecting Constructor dengan initializer List</div></div>
+  <div class="slide-content"><pre><code>
+//nama:Fajar rio dinata
+//nim:251410025
+//kelas:S12Aimport 'dart:core';
 
-  <!-- Slide 12: Best practices dan aturan (ringkasan) -->
-  <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-clipboard-list"></i> Slide 12: Aturan & Best Practices</div></div>
+class User {
+  final String id;
+  final String username;
+  final String email;
+  final DateTime createdAt;
+  final bool isActive;
+
+  // Constructor dengan initializer list
+  User({
+    required String id,
+    required String username,
+    required String email,
+    DateTime? createdAt,
+    bool isActive = true,
+  })  : id = id,
+        username = username,
+        email = email,
+        createdAt = createdAt ?? DateTime.now(),
+        isActive = isActive {
+    print('User $username created!');
+  }
+
+  // ✅ Redirecting constructor untuk Guest (diperbaiki)
+  User.guest()
+      : this(
+          id: 'guest_${DateTime.now().millisecondsSinceEpoch}',
+          username: 'Guest',
+          email: 'guest@example.com',
+          createdAt: null,
+          isActive: false,
+        );
+
+  // ✅ Redirecting constructor dari username (diperbaiki)
+  User.fromUsername(String username)
+      : this(
+          id: 'user_${username.toLowerCase()}',
+          username: username,
+          email: '${username.toLowerCase()}@example.com',
+          createdAt: null,
+          isActive: true,
+        );
+
+  // ✅ Redirecting constructor dengan validasi (diperbaiki)
+  // Catatan: Validasi TIDAK BISA dilakukan di redirecting constructor
+  // Solusi: Gunakan factory constructor untuk validasi
+  factory User.create(String email, String password) {
+    // Validasi dilakukan di sini (dalam factory)
+    if (!email.contains('@')) {
+      throw ArgumentError('Invalid email');
+    }
+    if (password.length < 8) {
+      throw ArgumentError('Password too short');
+    }
+
+    // Setelah validasi, panggil constructor utama melalui redirecting
+    return User(
+      id: 'user_${DateTime.now().millisecondsSinceEpoch}',
+      username: email.split('@').first,
+      email: email,
+      createdAt: null,
+      isActive: true,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'User(id: $id, username: $username, email: $email, createdAt: $createdAt, isActive: $isActive)';
+  }
+}
+
+// Contoh penggunaan
+void main() {
+  // Membuat user biasa
+  var regularUser = User(
+    id: '001',
+    username: 'johndoe',
+    email: 'john@example.com',
+    createdAt: DateTime.now(),
+    isActive: true,
+  );
+  print(regularUser);
+
+  // Membuat guest user
+  var guest = User.guest();
+  print(guest);
+
+  // Membuat user dari username
+  var userFromName = User.fromUsername('AliceWonder');
+  print(userFromName);
+
+  // Membuat user dengan validasi (menggunakan factory)
+  try {
+    var validUser = User.create('budi@example.com', 'password123');
+    print(validUser);
+  } catch (e) {
+    print('Error: $e');
+  }
+
+  // Contoh validasi gagal
+  try {
+    var invalidUser = User.create('invalid-email', 'short');
+  } catch (e) {
+    print('Error: $e');
+  }
+}}</code></pre></div></div>
+
+
+  <!-- Slide 13: Best practices dan aturan (ringkasan) -->
+  <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-clipboard-list"></i> Slide 13: Aturan & Best Practices</div></div>
   <div class="slide-content">
     <div class="tip-grid">
       <div class="tip-card"><i class="fas fa-thumbs-up"></i> <strong>Gunakan untuk:</strong><br>✔ Default values<br>✔ Convenience constructors<br>✔ Alternatif pembuatan objek</div>
@@ -360,8 +926,8 @@ void demoApi() {
     </div>
   </div></div>
 
-  <!-- Slide 13: Contoh kelebihan redirecting pada final fields -->
-  <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-gem"></i> Slide 13: Keuntungan Redirecting dengan final fields</div></div>
+  <!-- Slide 14: Contoh kelebihan redirecting pada final fields -->
+  <div class="slide-card"><div class="slide-header"><div class="slide-title"><i class="fas fa-gem"></i> Slide 14: Keuntungan Redirecting dengan final fields</div></div>
   <div class="slide-content"><p>Tanpa redirecting, final fields tidak bisa diinisialisasi setelah constructor body. Redirecting memungkinkan berbagai bentuk constructor sambil mempertahankan <code>final</code>.</p>
   <pre><code>class ImmutableUser {
   final String id, name;
