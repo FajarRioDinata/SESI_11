@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Redirecting Constructors - Fajar Rio Dinata | Dart OOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #eef5ff 0%, #d9eaff 100%);
+      font-family: 'Inter', sans-serif;
+      padding: 2rem 1rem;
+      color: #0a2b3e;
+    }
+
+    /* container slide seperti buku */
+    .slides-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* kartu slide */
+    .slide-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(0px);
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 80, 120, 0.25), 0 0 0 1px rgba(0, 120, 200, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s;
+    }
+
+    .slide-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 28px 40px -14px rgba(0, 100, 150, 0.35);
+    }
+
+    /* header slide */
+    .slide-header {
+      background: linear-gradient(135deg, #0077b6, #00b4d8);
+      padding: 1rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .slide-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slide-title i {
+      font-size: 1.7rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    .slide-badge {
+      background-color: #023e8a;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #caf0f8;
+      margin-left: auto;
+    }
+
+    /* konten */
+    .slide-content {
+      padding: 1.8rem 2rem 2rem 2rem;
+    }
+
+    /* code styling */
+    pre {
+      background: #0a2f44;
+      color: #e2f0fa;
+      padding: 1.2rem;
+      border-radius: 1.2rem;
+      overflow-x: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      margin: 1rem 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 5px 10px rgba(0,0,0,0.1);
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      background: #e6f4ff;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #0066a0;
+    }
+
+    .inline-code {
+      background: #e2f0ff;
+      color: #005f8c;
+      font-weight: 500;
+    }
+
+    .grid-compare {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .compare-card {
+      flex: 1;
+      background: #f6fbfe;
+      border-radius: 1.2rem;
+      padding: 1rem 1.3rem;
+      border-left: 6px solid #0096c7;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    .compare-card h4 {
+      color: #0077b6;
+      margin-bottom: 0.8rem;
+      font-weight: 700;
+    }
+
+    .note {
+      background: #e2f0ff;
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      border-left: 5px solid #00b4d8;
+    }
+
+    .tip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .tip-item {
+      background: white;
+      border-radius: 1rem;
+      padding: 0.8rem 1.2rem;
+      box-shadow: 0 2px 6px rgba(0,100,150,0.1);
+      flex: 1;
+      min-width: 180px;
+    }
+
+    hr {
+      margin: 1rem 0;
+      border: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00b4d8, transparent);
+    }
+
+    .footer-nim {
+      text-align: center;
+      margin-top: 2rem;
+      font-weight: 500;
+      background: #caf0f8cc;
+      backdrop-filter: blur(4px);
+      padding: 0.8rem;
+      border-radius: 60px;
+      font-size: 0.95rem;
+      color: #035c7c;
+    }
+
+    h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #035c7c;
+      margin-bottom: 0.8rem;
+    }
+
+    h4 {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin: 0.8rem 0 0.4rem;
+      color: #006d9e;
+    }
+
+    ul, .list-styled {
+      margin-left: 1.4rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin: 0.3rem 0;
+    }
+
+    @media (max-width: 780px) {
+      .slide-content {
+        padding: 1.2rem;
+      }
+      .slide-title {
+        font-size: 1.2rem;
+      }
+      pre {
+        font-size: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="slides-container">
+  
+  <!-- Nama & NIM ditampilkan sebagai identitas utama -->
+  <div style="text-align: right; margin-bottom: 0.5rem; font-weight: 600; background: linear-gradient(120deg,#fff, #caf0f8); padding: 0.6rem 1.5rem; border-radius: 60px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <i class="fas fa-code"></i> Fajar Rio Dinata | NIM: 251410025
+  </div>
+
+  <!-- SESI 11 JUDUL SLIDE (gabung dari page 1) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title">
+        <i class="fas fa-arrow-right-to-bracket"></i> SESI 11: Redirecting Constructors
+        <span class="slide-badge">Durasi: 200 menit | 14 Slide</span>
+      </div>
+    </div>
+    <div class="slide-content">
+      <p style="font-size: 1.1rem;">Materi lengkap tentang <strong>redirecting constructors</strong> di Dart — prinsip DRY, sintaks <code>: this(...)</code>, dan perbandingan dengan factory constructor. Disusun secara berurutan dari slide asli.</p>
+    </div>
+  </div>
+
+  <!-- REVIEW Sesi 10 (slide 2) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-history"></i> Slide 1: Review Sesi 10 - Factory Constructors</div>
+    </div>
+    <div class="slide-content">
+      <ul>
+        <li><strong>Factory constructor</strong>: <code class="inline-code">factory class.name()</code></li>
+        <li>Bisa <strong>return instance</strong> yang sudah ada atau subclass</li>
+        <li>Use cases: <strong>singleton, caching, object pools</strong></li>
+        <li>Contoh cepat: <code class="inline-code">factory Shape.circle() => Circle();</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Pengantar Redirecting Constructors (Slide 2 asli) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-code-branch"></i> Slide 2: Pengantar Redirecting Constructors</div>
+    </div>
+    <div class="slide-content">
+      <p>✔️ Apa itu? Constructor yang <strong>"mengalihkan"</strong> ke constructor lain di kelas yang sama.<br>
+      ✔️ Tujuan: <strong>Mengurangi duplikasi kode</strong> (DRY principle).<br>
+      ✔️ Sintaks: <code class="inline-code">: this(...)</code> di <strong>initializer list</strong>.<br>
+      ✔️ Tidak punya body (tidak ada <code>{ }</code>).</p>
+      <div class="note"><i class="fas fa-lightbulb"></i> <strong>Contoh dasar:</strong> <code>Point.origin() : this(0, 0);</code> → langsung mengarah ke constructor utama.</div>
+    </div>
+  </div>
+
+  <!-- Sintaks Dasar Redirecting Constructor + class Point (Slide 3) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-code"></i> Slide 3: Sintaks Dasar Redirecting Constructor</div>
+    </div>
+    <div class="slide-content">
+      <pre><code>class Point {
+  final double x;
+  final double y;
+
+  // Konstruktor utama
+  Point(this.x, this.y) {
+    // print('Point created');
+  }
+
+  // Redirecting constructors
+  Point.origin() : this(0, 0);
+  Point.onXAxis(double x) : this(x, 0);
+  Point.onYAxis(double y) : this(0, y);
+
+  @override
+  String toString() => 'Point($x, $y)';
+}
+
+void main() {
+  var origin = Point.origin();       // Point(0,0)
+  var pointOnX = Point.onXAxis(5);   // Point(5,0)
+  var pointOnY = Point.onYAxis(3);   // Point(0,3)
+  print('Origin: $origin');
+  print('Point on X-axis: $pointOnX');
+  print('Point on Y-axis: $pointOnY');
+}</code></pre>
+      <p><i class="fas fa-check-circle" style="color:#0096c7;"></i> <strong>Output:</strong> Origin: Point(0,0) | Point on X-axis: Point(5,0) | Point on Y-axis: Point(0,3)</p>
+    </div>
+  </div>
+
+  <!-- Masalah tanpa redirecting (Slide 4)-->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-exclamation-triangle"></i> Slide 4: Masalah Tanpa Redirecting Constructor</div>
+    </div>
+    <div class="slide-content">
+      <pre><code>class Rectangle {
+  final double width;
+  final double height;
+  Rectangle(this.width, this.height);
+
+  // Tanpa redirecting - ERROR karena final fields
+  /* Rectangle.square(double side) {
+    width = side;  // ERROR: final field
+    height = side;
+  }
+
+  Rectangle.withDefault() {
+    width = 100;
+    height = 50;
+  } */
+}</code></pre>
+      <p class="note"><i class="fas fa-times-circle" style="color:#c1121f;"></i> <strong>Masalah:</strong> final fields tidak bisa diinisialisasi setelah body constructor. Duplikasi logika & error kompilasi.</p>
+    </div>
+  </div>
+
+  <!-- Solusi dengan Redirecting Constructor (Slide 5) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-check-double"></i> Slide 5: Solusi dengan Redirecting Constructor</div>
+    </div>
+    <div class="slide-content">
+      <pre><code>class Rectangle {
+  final double width;
+  final double height;
+
+  // Main constructor
+  Rectangle(this.width, this.height) {
+    print('Rectangle ${width.toStringAsFixed(2)} x ${height.toStringAsFixed(2)} created');
+  }
+
+  // Redirecting constructors
+  Rectangle.square(double side) : this(side, side);
+  Rectangle.widthDefault() : this(100, 50);
+  Rectangle.fromWidth(double width) : this(width, width * 0.618); // golden ratio
+
+  @override
+  String toString() => 'Rectangle(width: ${width.toStringAsFixed(2)}, height: ${height.toStringAsFixed(2)})';
+}
+
+void main() {
+  var square = Rectangle.square(10);          // 10x10
+  var defaultRect = Rectangle.widthDefault(); // 100x50
+  var goldenRect = Rectangle.fromWidth(100);  // 100x61.80
+  print('Square: $square');
+  print('Default: $defaultRect');
+  print('Golden Ratio: $goldenRect');
+}</code></pre>
+      <p><i class="fas fa-gem" style="color:#00b4d8;"></i> <strong>Keuntungan:</strong> kode bersih, final fields terinisialisasi lewat constructor utama tanpa duplikasi.</p>
+    </div>
+  </div>
+
+  <!-- Redirecting Constructor dengan Named Parameters (Slide 6) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-tag"></i> Slide 6: Redirecting Constructor dengan Named Parameters</div>
+    </div>
+    <div class="slide-content">
+      <pre><code>class Person {
+  final String name;
+  final int age;
+  final String? email;
+
+  // Main constructor dengan named parameters
+  Person({required this.name, required this.age, this.email});
+
+  // Redirecting dengan default values
+  Person.anonymous() : this(name: 'Anonymous', age: 0);
+  Person.fromName(String name) : this(name: name, age: 0);
+  Person.adult(String name) : this(name: name, age: 18);
+  Person.child(String name, int years) : this(name: name, age: years, email: null);
+
+  @override
+  String toString() => 'Name: $name, Age: $age, Email: ${email ?? "N/A"}';
+}</code></pre>
+    <div class="tip-item"><i class="fas fa-arrow-right"></i> <strong>Contoh:</strong> Person.adult('Budi') → age=18, email null</div>
+    </div>
+  </div>
+
+  <!-- Praktik 1 - Configuration Class (Slide 7 placeholder) dan slide8 -- digabung ringkasan tapi sesuai urutan -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-sliders-h"></i> Slide 7-8: Configuration Class & Validasi</div>
+    </div>
+    <div class="slide-content">
+      <p>Dalam konfigurasi, redirecting constructor memudahkan pengaturan default. Validasi bisa dilakukan di <strong>constructor utama</strong>.</p>
+      <pre><code>class AppConfig {
+  final String apiUrl;
+  final int timeout;
+  final bool enableCache;
+
+  AppConfig({required this.apiUrl, this.timeout = 30, this.enableCache = true}) {
+    if (timeout <= 0) throw ArgumentError('timeout > 0');
+  }
+
+  // Redirecting ke utama dengan nilai default khusus
+  AppConfig.dev() : this(apiUrl: 'https://dev.api.local', timeout: 60);
+  AppConfig.prod() : this(apiUrl: 'https://api.prod.com', timeout: 15);
+}</code></pre>
+      <p class="note"><i class="fas fa-shield-alt"></i> Redirecting constructor tidak punya body, tapi validasi tetap bisa dijalankan di constructor yang dituju.</p>
+    </div>
+  </div>
+
+  <!-- Multiple Redirecting Levels (Slide 9) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-layer-group"></i> Slide 9: Multiple Redirecting Levels</div>
+    </div>
+    <div class="slide-content">
+      <pre><code>class Product {
+  final String id;
+  final String name;
+  final double price;
+  final String category;
+  final int stock;
+  final DateTime? expiryDate;
+
+  // Main constructor terlengkap
+  Product({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.category,
+    required this.stock,
+    this.expiryDate,
+  });
+
+  // Level 1
+  Product.basic(String id, String name, double price)
+      : this(id: id, name: name, price: price, category: 'General', stock: 0);
+
+  // Level 2 (dari basic)
+  Product.withCategory(String id, String name, double price, String category)
+      : this(id: id, name: name, price: price, category: category, stock: 0);
+
+  // Level 3 (memanggil ke utama)
+  Product.full({
+    required String id,
+    required String name,
+    required double price,
+    required String category,
+    required int stock,
+    DateTime? expiry,
+  }) : this(id: id, name: name, price: price, category: category, stock: stock, expiryDate: expiry);
+}
+
+var basic = Product.basic('P001', 'Item 1', 10.0);
+var categorized = Product.withCategory('P002', 'Item 2', 20.0, 'Electronics');
+var full = Product.full(id: 'P003', name: 'Item 3', price: 30.0, category: 'Food', stock: 100, expiry: DateTime.now());</code></pre>
+      <p>✨ <strong>Rantai redirecting</strong> mengurangi duplikasi dan konsisten dengan constructor utama.</p>
+    </div>
+  </div>
+
+  <!-- Redirecting Constructor vs Factory Constructor (Slide 10) -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-balance-scale"></i> Slide 10: Redirecting vs Factory Constructor</div>
+    </div>
+    <div class="slide-content">
+      <div class="grid-compare">
+        <div class="compare-card"><h4><i class="fas fa-share-alt"></i> Redirecting Constructor</h4>
+          <ul>
+            <li><strong>Tujuan:</strong> panggil constructor lain di kelas yang sama</li>
+            <li><strong>Return:</strong> harus instance class ini</li>
+            <li><strong>Body:</strong> tidak ada (hanya : this(...))</li>
+            <li><strong>Final fields:</strong> bisa diinisialisasi</li>
+            <li><strong>Use case:</strong> default parameters, convenience constructors</li>
+          </ul>
+        </div>
+        <div class="compare-card"><h4><i class="fas fa-factory"></i> Factory Constructor</h4>
+          <ul>
+            <li><strong>Tujuan:</strong> logic kompleks, caching, subclass</li>
+            <li><strong>Return:</strong> instance yang sudah ada atau subclass</li>
+            <li><strong>Body:</strong> ada (bisa berisi logic)</li>
+            <li><strong>Final fields:</strong> tidak bisa (harus lewat constructor)</li>
+            <li><strong>Use case:</strong> singleton, object pool, polymorphism</li>
+          </ul>
+        </div>
+      </div>
+      <div class="note"><i class="fas fa-info-circle"></i> <strong>Kesimpulan:</strong> Redirecting untuk delegasi sederhana, Factory untuk pola kompleks.</div>
+    </div>
+  </div>
+
+  <!-- Aturan dan tips (Slide 13/14 sesuai urutan konsep) slide 11-12 mungkin kosong tabel tapi kita tampilkan best practices -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-list-check"></i> Best Practices & Tips</div>
+    </div>
+    <div class="slide-content">
+      <div class="tip-grid">
+        <div class="tip-item"><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> <strong>Gunakan untuk:</strong><br> - Default parameter values<br> - Convenience constructors<br> - Alternative ways to create objects</div>
+        <div class="tip-item"><i class="fas fa-ban" style="color:#e76f51;"></i> <strong>Hindari untuk:</strong><br> - Complex logic (gunakan factory)<br> - Caching & Singleton<br> - Subclass creation</div>
+        <div class="tip-item"><i class="fas fa-lightbulb" style="color:#f4a261;"></i> <strong>Tips:</strong><br> - Keep redirecting chains short<br> - Document constructor purpose<br> - Gunakan nama yang bermakna</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ringkasan & Latihan (Slide 14) dengan Latihan Circle -->
+  <div class="slide-card">
+    <div class="slide-header">
+      <div class="slide-title"><i class="fas fa-chalkboard-user"></i> Slide 14: Ringkasan & Latihan</div>
+    </div>
+    <div class="slide-content">
+      <h3>✨ Ringkasan:</h3>
+      <ul>
+        <li>Redirecting constructor: <code class="inline-code">: this(...)</code> tanpa body.</li>
+        <li>Memanggil constructor lain di class yang sama → DRY principle.</li>
+        <li>Mengurangi duplikasi kode, khusus untuk final fields.</li>
+        <li>Tidak bisa berisi logic kompleks — delegasi murni.</li>
+      </ul>
+      <hr>
+      <h3><i class="fas fa-laptop-code"></i> Latihan (Circle Class):</h3>
+      <p>Buat class <strong>Circle</strong> dengan:</p>
+      <ul>
+        <li>Main constructor dengan <code>radius</code> (final double radius)</li>
+        <li>Redirecting constructor <strong>fromDiameter(double diameter)</strong> → mengarah ke this(diameter/2)</li>
+        <li>Redirecting constructor <strong>fromCircumference(double circumference)</strong> → radius = circumference / (2*pi)</li>
+        <li>Redirecting constructor <strong>fromArea(double area)</strong> → radius = sqrt(area / pi)</li>
+      </ul>
+      <div class="note" style="background:#caf0f8;">
+        <i class="fas fa-terminal"></i> <strong>Contoh Solusi :</strong>
+        <pre style="margin-top: 12px; background:#023e5a;"><code>class Circle {
+  final double radius;
+  Circle(this.radius);
+  Circle.fromDiameter(double d) : this(d / 2);
+  Circle.fromCircumference(double c) : this(c / (2 * 3.14159));
+  Circle.fromArea(double a) : this(sqrt(a / 3.14159));
+  @override String toString() => 'Circle(r=${radius.toStringAsFixed(2)})';
+}</code></pre>
+        <p style="margin-top: 8px;">Implementasikan di DartPad dan coba buat objek: <code>Circle.fromDiameter(10)</code>, <code>Circle.fromArea(78.5)</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Penutup dengan NIM sebagai footer -->
+  <div class="footer-nim">
+    <i class="fas fa-graduation-cap"></i> Fajar Rio Dinata (251410025) — Pemrograman Dart Lanjut | Redirecting Constructors  <i class="fas fa-dart"></i>
+  </div>
+</div>
+</body>
+</html>
+```
